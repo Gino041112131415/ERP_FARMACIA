@@ -1,0 +1,58 @@
+{% extends 'layout.html' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="card card-default">
+  <form method="post" enctype="multipart/form-data">
+    <div class="card-header">
+      <h3 class="card-title">
+        {% if action == 'add' %}
+          <i class="fas fa-plus"></i> Crear Producto
+        {% else %}
+          <i class="fas fa-edit"></i> Editar Producto
+        {% endif %}
+      </h3>
+    </div>
+
+    <div class="card-body">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="{{ action }}">
+
+      {% for field in form.visible_fields %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}:</label>
+        {{ field }}
+        {% if field.errors %}
+        <small class="text-danger">{{ field.errors|join:", " }}</small>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card-footer text-center">
+      <button type="submit" class="btn btn-primary btn-flat">
+        <i class="fas fa-save"></i> Guardar registro
+      </button>
+      <a href="{{ list_url }}" class="btn btn-secondary btn-flat">
+        <i class="fas fa-times"></i> Cancelar
+      </a>
+    </div>
+  </form>
+</div>
+
+<script>
+$(function() {
+    $('form').on('submit', function(e) {
+        e.preventDefault();
+
+        // ✅ FormData para manejar imagen correctamente
+        let parameters = new FormData(this);
+
+        // ✅ Llamada AJAX con callback funcional
+        submit_with_ajax(window.location.pathname, parameters, function() {
+            location.href = '{{ list_url }}';
+        });
+    });
+});
+</script>
+{% endblock %}

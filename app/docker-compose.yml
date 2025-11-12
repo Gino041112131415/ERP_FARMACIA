@@ -1,0 +1,32 @@
+services:
+  sonarqube_server:
+    image: sonarqube:community
+    container_name: sonarqube_server
+    ports:
+      - "9001:9000"
+    environment:
+      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+  sonarscanner_hades:
+    image: sonarsource/sonar-scanner-cli:latest
+    container_name: sonarscanner_hades
+    depends_on:
+      - sonarqube_server
+    working_dir: /usr/src
+    volumes:
+      - ./app:/usr/src
+    environment:
+      - SONAR_USER_HOME=/tmp/.sonar
+      - SONAR_SCANNER_OPTS=-Xmx512m
+    # 👇 se conecta a tu contenedor local de SonarQube
+    command: [
+      "-Dproject.settings=/usr/src/sonar-project.properties",
+      "-Dsonar.host.url=http://sonarqube_server:9000"
+    ]
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:

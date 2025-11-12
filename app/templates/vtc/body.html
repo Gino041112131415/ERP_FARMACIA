@@ -1,0 +1,63 @@
+{% extends 'home.html' %}
+{% block body %}
+<body class="hold-transition sidebar-mini layout-fixed">
+  <div class="wrapper">
+
+    <!-- Navbar -->
+    {% include 'vtc/header.html' %}
+
+    <!-- Sidebar -->
+    {% include 'vtc/sidebar.html' %}
+
+    <!-- Contenedor principal -->
+    <div class="content-wrapper">
+
+      <!-- Encabezado -->
+      <div class="content-header">
+        <div class="container-fluid">
+          <div class="row mb-2">
+            <!-- Título -->
+            <div class="col-sm-6">
+              <h1 class="m-0 text-dark">
+                Sistema de Inventarios <small>X</small>
+              </h1>
+            </div>
+
+            <!-- Breadcrumb -->
+            <div class="col-sm-6">
+              <ol class="breadcrumb float-sm-right">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ list_url }}">{{ entity }}</a></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- /.content-header -->
+
+      <!-- Contenido principal -->
+      <div class="content">
+        <div class="container-fluid">
+          {% block content %}
+          <!-- Aquí se carga el contenido de las vistas hijas -->
+          {% endblock %}
+        </div>
+      </div>
+      <!-- /.content -->
+    </div>
+    <!-- /.content-wrapper -->
+
+    <!-- Sidebar de control (opcional) -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Contenido adicional si lo necesitas -->
+    </aside>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+  </div>
+
+  {% block javascript %}
+  {% endblock %}
+</body>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block head %}
+  <!-- DataTables CSS -->
+  <link rel="stylesheet" href="{% static 'lib/datatables-1.10.25/css/dataTables.bootstrap4.min.css' %}">
+  <link rel="stylesheet" href="{% static 'lib/datatables-1.10.25/plugins/responsive-2.2.9/css/responsive.bootstrap4.min.css' %}">
+
+  <!-- DataTables JS -->
+  <script src="{% static 'lib/datatables-1.10.25/js/jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'lib/datatables-1.10.25/js/dataTables.bootstrap4.min.js' %}"></script>
+  <script src="{% static 'lib/datatables-1.10.25/plugins/responsive-2.2.9/js/dataTables.responsive.min.js' %}"></script>
+  <script src="{% static 'lib/datatables-1.10.25/plugins/responsive-2.2.9/js/responsive.bootstrap4.min.js' %}"></script>
+
+  {% block head_list  %}
+  
+  {% endblock %}
+
+{% endblock %}
+
+{% block content %}
+<div class="card card-default">
+  <div class="card-header">
+    <h3 class="card-title">
+      <i class="fas fa-search"></i>
+      {{ title }}
+    </h3>
+  </div>
+
+  <div class="card-body">
+    <!-- importante: el id="data" -->
+    <table  class="table" id="data">
+      <thead>
+        {% block columns %}
+        {% endblock %}
+      </thead>
+
+      <tbody>
+        {% block rows %}
+        {% endblock %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-footer">
+    <a href="{{ create_url }}" class="btn btn-primary btn-flat btnTest">
+      <i class="fas fa-plus"></i> Nuevo registro
+    </a>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script type="application/javascript">
+  // Inicialización de DataTable
+  $(function () {
+    $('#data').DataTable({
+      responsive: true,
+      autoWidth: false,
+      language: {
+        url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Spanish.json"
+      }
+    });
+  });
+
+  // Evento de prueba para el botón "Nuevo registro"
+  $(".btnTest").on('click', function () {
+    $.ajax({
+      url: "{% url 'erp:category_list' %}",  // Corregido el template tag y comillas
+      type: "POST",
+      data: { id: 787 },
+      dataType: 'json'
+    })
+    .done(function (data) {
+      alert("Petición exitosa");
+      console.log(data);
+    })
+    .fail(function (jqxHR, textStatus, errorThrown) {
+      alert('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
+      console.error(error);
+    })
+    .always(function () {
+      
+    });
+  });
+</script>
+{% endblock %}
