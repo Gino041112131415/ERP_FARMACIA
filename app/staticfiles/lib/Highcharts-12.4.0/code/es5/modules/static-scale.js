@@ -1,0 +1,11 @@
+!/**
+ * Highcharts Gantt JS v12.4.0 (2025-09-04)
+ * @module highcharts/modules/static-scale
+ * @requires highcharts
+ *
+ * StaticScale
+ *
+ * (c) 2016-2025 Torstein Honsi, Lars A. V. Cabrera
+ *
+ * License: www.highcharts.com/license
+ */function(t,e){"object"==typeof exports&&"object"==typeof module?module.exports=e(require("highcharts")):"function"==typeof define&&define.amd?define("highcharts/modules/static-scale",[["highcharts/highcharts"]],e):"object"==typeof exports?exports["highcharts/modules/static-scale"]=e(require("highcharts")):t.Highcharts=e(t.Highcharts)}(this,function(t){return function(){"use strict";var e={944:function(e){e.exports=t}},i={};function r(t){var a=i[t];if(void 0!==a)return a.exports;var o=i[t]={exports:{}};return e[t](o,o.exports,r),o.exports}r.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return r.d(e,{a:e}),e},r.d=function(t,e){for(var i in e)r.o(e,i)&&!r.o(t,i)&&Object.defineProperty(t,i,{enumerable:!0,get:e[i]})},r.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)};var a={};r.d(a,{default:function(){return f}});var o=r(944),n=r.n(o),s=n().addEvent,h=n().defined,c=n().isNumber;function u(){var t,e=this.chart.userOptions.chart;!this.horiz&&c(this.options.staticScale)&&(!(null==e?void 0:e.height)||(null==(t=e.scrollablePlotArea)?void 0:t.minHeight))&&(this.staticScale=this.options.staticScale)}function l(){var t,e;if("adjustHeight"!==this.redrawTrigger){for(var i=0,r=this.axes||[];i<r.length;i++)!function(i){var r=i.chart,a=i.options.staticScale;if(i.staticScale&&a&&h(i.min)&&h(i.max)){var o=(null!=(e=null==(t=i.brokenAxis)?void 0:t.unitLength)?e:i.max+i.tickInterval-i.min)*a,n=(o=Math.max(o,a))-r.plotHeight;!r.scrollablePixelsY&&Math.abs(n)>=1&&(r.plotHeight=o,r.redrawTrigger="adjustHeight",r.setSize(void 0,r.chartHeight+n,!!r.initiatedScale&&void 0)),i.series.forEach(function(t){var e=t.sharedClipKey&&r.sharedClips[t.sharedClipKey];e&&e.attr(r.inverted?{width:r.plotHeight}:{height:r.plotHeight})})}}(r[i]);this.initiatedScale=!0}this.redrawTrigger=void 0}var d=n();({compose:function(t,e){var i=e.prototype;i.adjustHeight||(s(t,"afterSetOptions",u),i.adjustHeight=l,s(e,"render",i.adjustHeight))}}).compose(d.Axis,d.Chart);var f=n();return a.default}()});

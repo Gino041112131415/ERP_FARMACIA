@@ -27,56 +27,74 @@ function message_error(obj) {
 
 
 // ==============================
-// Confirmación y envío AJAX
+// AJAX UNIVERSAL CORREGIDO
 // ==============================
 function submit_with_ajax(url, parameters, callback) {
+
+    const isFormData = parameters instanceof FormData;
+
+    $.ajax({
+        url: url,
+        type: 'POST',
+        data: parameters,
+        dataType: 'json',
+        processData: !isFormData,
+        contentType: !isFormData ? 'application/x-www-form-urlencoded; charset=UTF-8' : false,
+    }).done(function (data) {
+
+        console.log("🔥 Servidor respondió:", data);
+
+        // ------------------------------------
+        // 🔥 VALIDACIÓN CORRECTA DE ERROR
+        // ------------------------------------
+        if (data.error && data.error !== "") {
+            message_error(data.error);
+            return;
+        }
+
+        // ------------------------------------
+        // 🔥 SI NO HAY ERROR → EJECUTAR CALLBACK
+        // ------------------------------------
+        callback(data);
+
+    }).fail(function (jqXHR, textStatus, errorThrown) {
+        console.error('❌ Error AJAX:', textStatus, errorThrown);
+        message_error(`${textStatus}: ${errorThrown}`);
+    });
+}
+
+
+
+// ======================================================
+// Confirmación estilo profesor (solo para eliminar)
+// ======================================================
+function alert_action(title, content, callback) {
+
     $.confirm({
         theme: 'material',
-        title: 'Confirmación',
+        title: title,
         icon: 'fa fa-info',
-        content: '¿Estás seguro de continuar con esta acción?',
-        columnClass: 'medium',
+        content: content,
+        columnClass: 'small',
         typeAnimated: true,
         cancelButtonClass: 'btn-primary',
         draggable: true,
         dragWindowBorder: false,
+
         buttons: {
+
             info: {
                 text: "Sí",
                 btnClass: 'btn-primary',
                 action: function () {
-
-                    // ✅ Verificar si parameters es FormData o no
-                    const isFormData = parameters instanceof FormData;
-
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: parameters,
-                        dataType: 'json',
-                        processData: !isFormData ? true : false, // si es FormData → false
-                        contentType: !isFormData ? 'application/x-www-form-urlencoded; charset=UTF-8' : false,
-                    }).done(function (data) {
-                        console.log('✅ Respuesta del servidor:', data);
-
-                        if (!data.hasOwnProperty('error')) {
-                            callback();
-                            return false;
-                        }
-                        message_error(data.error);
-
-                    }).fail(function (jqXHR, textStatus, errorThrown) {
-                        console.error('❌ Error AJAX:', textStatus, errorThrown);
-                        message_error(`${textStatus}: ${errorThrown}`);
-                    });
+                    callback();
                 }
             },
+
             danger: {
                 text: "No",
-                btnClass: 'btn-danger',
-                action: function () {
-                    console.log('Acción cancelada por el usuario');
-                }
+                btnClass: 'btn-red',
+                action: function () {}
             }
         }
     });

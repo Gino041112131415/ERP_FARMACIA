@@ -1,60 +1,259 @@
 {% load static %}
 
-<aside class="main-sidebar sidebar-light-primary elevation-1">
+<style>
+  /* ====== ESTILO LATERAL PERSONALIZADO ====== */
+
+  .main-sidebar {
+      background: linear-gradient(180deg, #1d4ed8 0%, #2563eb 40%, #38bdf8 100%);
+      color: #e5e7eb;
+  }
+
+  /* Logo superior */
+  .main-sidebar .brand-link {
+      background: transparent;
+      border-bottom: 1px solid rgba(15, 23, 42, 0.15);
+  }
+
+  .main-sidebar .brand-link .brand-text {
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: .03em;
+  }
+
+  /* Usuario */
+  .main-sidebar .user-panel .info a {
+      color: #f9fafb;
+      font-weight: 500;
+  }
+
+  /* Cabeceras de secciones */
+  .main-sidebar .nav-header {
+      font-size: 11px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: #bfdbfe;
+      padding: 10px 18px 4px 18px;
+  }
+
+  /* Links */
+  .main-sidebar .nav-link {
+      color: #e5e7eb;
+      border-radius: 999px;
+      margin: 2px 10px;
+      padding: 8px 12px;
+      transition: background .15s ease, transform .15s ease;
+  }
+
+  .main-sidebar .nav-link .nav-icon {
+      color: #dbeafe;
+      width: 20px;
+  }
+
+  .main-sidebar .nav-link:hover {
+      background: rgba(15, 23, 42, 0.25);
+      transform: translateX(2px);
+  }
+
+  /* Activo */
+  .main-sidebar .nav-link.active {
+      background: #f9fafb;
+      color: #0f172a;
+      box-shadow: 0 6px 14px rgba(15, 23, 42, 0.25);
+  }
+
+  .main-sidebar .nav-link.active .nav-icon {
+      color: #2563eb;
+  }
+
+  /* Flechitas de treeview */
+  .main-sidebar .nav-item .right {
+      color: #bfdbfe;
+  }
+
+  /* Submenú */
+  .main-sidebar .nav-treeview .nav-link {
+      margin-left: 30px;
+      font-size: 14px;
+      border-radius: 999px;
+  }
+
+</style>
+
+<aside class="main-sidebar sidebar-dark-primary elevation-2">
   <!-- Logo superior -->
   <a href="#" class="brand-link">
-    <img src="{% static 'lib/AdminLTE-4.0.0-rc4/img/AdminLTELogo.png' %}"
+    <img src="{% static 'img/farmacia.png' %}"
          alt="Logo"
          class="brand-image img-circle elevation-3"
-         style="opacity:.8; width:40px; height:40px; object-fit:contain;">
-    <span class="brand-text font-weight-bold">Hades</span>
+         style="opacity:.9; width:40px; height:40px; object-fit:contain;">
+    <span class="brand-text">Inventarios</span>
   </a>
 
   <!-- Contenido del sidebar -->
   <div class="sidebar">
-    <!-- Usuario -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="{% static 'img/user.png' %}" class="img-circle" alt="User Image">
+
+      <!-- PANEL DE USUARIO -->
+      <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+          <div class="image">
+              <img src="{{ request.user.get_image }}" class="img-circle elevation-2" alt="User Image">
+          </div>
+          <div class="info">
+              <a href="#" class="d-block">
+                  {% if request.user.first_name or request.user.last_name %}
+                      {{ request.user.first_name }} {{ request.user.last_name }}
+                  {% else %}
+                      {{ request.user.username }}
+                  {% endif %}
+              </a>
+          </div>
       </div>
-      <div class="info">
-        <a class="d-block">Usuario</a>
-      </div>
-    </div>
 
-    <!-- Menú -->
-    <nav class="mt-2">
-      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-        <li class="nav-header">Mantenimientos</li>
+      <!-- Menú -->
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column"
+            data-widget="treeview" role="menu" data-accordion="false">
 
-        <li class="nav-item">
-          <a href="{% url 'erp:category_list' %}" class="nav-link">
-            <i class="nav-icon fas fa-truck-loading"></i>
-            <p>Categorías</p>
-          </a>
-        </li>
+          <!-- ============ MANTENIMIENTOS ============ -->
+          <li class="nav-header">MANTENIMIENTOS</li>
 
-        <li class="nav-item">
-          <a href="{% url 'erp:product_list' %}" class="nav-link">
-            <i class="nav-icon fas fa-boxes"></i>
-            <p>Productos</p>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a href="{% url 'erp:category_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'category_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-truck-loading"></i>
+              <p>Categorías</p>
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-users"></i>
-            <p>Clientes</p>
-          </a>
-        </li>
+          <li class="nav-item">
+            <a href="{% url 'erp:product_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'product_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-boxes"></i>
+              <p>Productos</p>
+            </a>
+          </li>
 
-        <li class="nav-item">
-          <a href="#" class="nav-link">
-            <i class="nav-icon fas fa-chart-bar"></i>
-            <p>Reportes</p>
-          </a>
-        </li>
-      </ul>
-    </nav>
+          <li class="nav-item">
+            <a href="{% url 'erp:client_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'client_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-users"></i>
+              <p>Clientes</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{% url 'erp:provider_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'provider_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-truck"></i>
+              <p>Proveedores</p>
+            </a>
+          </li>
+
+          <!-- 👉 MENÚ: USUARIOS -->
+          <li class="nav-item">
+            <a href="{% url 'user:user_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-user-cog"></i>
+              <p>Usuarios</p>
+            </a>
+          </li>
+
+          <!-- ============ INVENTARIO ============ -->
+          <li class="nav-header">INVENTARIO</li>
+
+          <li class="nav-item">
+            <a href="{% url 'erp:inventory_movement_list' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'inventory_movement_list' %}active{% endif %}">
+              <i class="nav-icon fas fa-exchange-alt"></i>
+              <p>Movimientos de inventario</p>
+            </a>
+          </li>
+
+          <!-- ============ REPORTES & IA ============ -->
+          <li class="nav-header">REPORTES &amp; IA</li>
+
+          <li class="nav-item">
+            <a href="{% url 'erp:dashboard' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+              <i class="nav-icon fas fa-chart-line"></i>
+              <p>Gráfico de reporte</p>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a href="{% url 'erp:ml_dashboard' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'ml_dashboard' %}active{% endif %}">
+              <i class="nav-icon fas fa-robot"></i>
+              <p>Predicción de demanda</p>
+            </a>
+          </li>
+
+          <!-- ============ OPERACIONES ============ -->
+          <li class="nav-header">OPERACIONES</li>
+
+          <!-- Ventas -->
+          <li class="nav-item has-treeview">
+            <a href="#"
+               class="nav-link {% if request.resolver_match.url_name in 'sale_create sale_list sale_report' %}active{% endif %}">
+              <i class="nav-icon fas fa-shopping-cart"></i>
+              <p>
+                Ventas
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'erp:sale_create' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'sale_create' %}active{% endif %}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nueva venta</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'erp:sale_list' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'sale_list' %}active{% endif %}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Ventas y Detalles</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'sale_report' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'sale_report' %}active{% endif %}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Reporte de las Ventas</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <!-- Compras -->
+          <li class="nav-item has-treeview">
+            <a href="#"
+               class="nav-link {% if request.resolver_match.url_name in 'purchase_list purchase_create' %}active{% endif %}">
+              <i class="nav-icon fas fa-cart-plus"></i>
+              <p>
+                Compras
+                <i class="right fas fa-angle-left"></i>
+              </p>
+            </a>
+            <ul class="nav nav-treeview">
+              <li class="nav-item">
+                <a href="{% url 'erp:purchase_list' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'purchase_list' %}active{% endif %}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Listado de compras</p>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a href="{% url 'erp:purchase_create' %}"
+                   class="nav-link {% if request.resolver_match.url_name == 'purchase_create' %}active{% endif %}">
+                  <i class="far fa-circle nav-icon"></i>
+                  <p>Nueva compra</p>
+                </a>
+              </li>
+            </ul>
+          </li>
+
+        </ul>
+      </nav>
   </div>
 </aside>

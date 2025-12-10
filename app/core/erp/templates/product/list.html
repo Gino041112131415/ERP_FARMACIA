@@ -45,7 +45,42 @@
 {% endblock %}
 
 {% block javascript %}
+<style>
+
+    /* Estado base */
+    .row-low-stock,
+    .row-low-stock td {
+        background-color: rgba(240, 240, 240, 0.12) !important;
+    }
+
+    .row-good-stock,
+    .row-good-stock td {
+        background-color: rgba(231, 235, 231, 0.12) !important;
+    }
+
+    /* BLOCK: Quitamos hover blanco que pone DataTables + Bootstrap */
+    table.dataTable tbody tr:hover > td {
+        background-color: transparent !important;
+    }
+
+    /* HOVER MÁS OSCURO */
+    .row-low-stock:hover,
+    .row-low-stock:hover td {
+        background-color: rgba(255, 0, 0, 0.22) !important;
+    }
+
+    .row-good-stock:hover,
+    .row-good-stock:hover td {
+        background-color: rgba(0, 200, 0, 0.22) !important;
+    }
+
+</style>
+
 {% endblock %}
+
+
+
+
 
 
 

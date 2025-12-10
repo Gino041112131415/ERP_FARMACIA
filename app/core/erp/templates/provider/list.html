@@ -1,0 +1,94 @@
+{% extends 'list.html' %}
+{% load static %}
+
+{% block head_list %}
+<script src="{% static 'provider/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+<tr>
+    <th>Nro</th>
+    <th>Empresa</th>
+    <th>Dirección</th>
+    <th>Nombre</th>
+    <th>Teléfono</th>
+    <th>Email</th>
+    <th>Acciones</th>
+</tr>
+{% endblock %}
+
+{% block extra_buttons %}
+<button class="btn btn-primary" id="btnAdd">
+    <i class="fas fa-plus"></i> Nuevo registro
+</button>
+{% endblock %}
+
+{% block javascript %}
+
+<!-- ===================================================== -->
+<!-- =============== MODAL AGREGAR / EDITAR =============== -->
+<!-- ===================================================== -->
+<div class="modal fade" id="modalProvider" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form id="frmProvider">
+        {% csrf_token %}
+        <input type="hidden" name="action" id="action">
+        <input type="hidden" name="id" id="id">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Nuevo Proveedor</h5>
+          <button class="close" data-dismiss="modal"><span>&times;</span></button>
+        </div>
+
+        <div class="modal-body">
+          {{ form.as_p }}
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ===================================================== -->
+<!-- ================= MODAL ELIMINAR ==================== -->
+<!-- ===================================================== -->
+<div class="modal fade" id="modalDeleteProvider" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title">Eliminar Proveedor</h5>
+        <button class="close text-white" data-dismiss="modal"><span>&times;</span></button>
+      </div>
+
+      <div class="modal-body text-center">
+        <p>¿Seguro que deseas eliminar este proveedor?</p>
+        <input type="hidden" id="delete-id">
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-dismiss="modal">
+          Cancelar
+        </button>
+
+        <button class="btn btn-danger" id="btnConfirmDelete">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+

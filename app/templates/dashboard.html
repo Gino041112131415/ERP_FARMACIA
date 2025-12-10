@@ -1,2 +1,233 @@
 {% extends 'layout.html' %}
+{% load static %}
 
+{% block head %}
+    <script src="{% static 'lib/Highcharts-12.4.0/code/highcharts.js' %}"></script>
+    <script src="{% static 'lib/Highcharts-12.4.0/code/modules/exporting.js' %}"></script>
+    <script src="{% static 'lib/Highcharts-12.4.0/code/modules/export-data.js' %}"></script>
+    <script src="{% static 'lib/Highcharts-12.4.0/code/modules/accessibility.js' %}"></script>
+
+    <!-- SWEETALERT2 -->
+    <script src="{% static 'lib/sweetalert2-11.26.3/package/dist/sweetalert2.all.min.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <!-- ===================== GRÁFICO PRINCIPAL ===================== -->
+    <div class="row">
+        <div class="col-12">
+            <div id="chart_principal" style="height: 400px;"></div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- ===================== 3 GRÁFICOS SECUNDARIOS ===================== -->
+    <div class="row">
+
+        <!-- Pie Chart: Top productos -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div id="chart_pie" style="height: 300px;"></div>
+        </div>
+
+        <!-- Column Chart: Productos próximos a vencer -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div id="chart_bar" style="height: 300px;"></div>
+        </div>
+
+        <!-- Area Chart: Stock actual -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div id="chart_area" style="height: 300px;"></div>
+        </div>
+
+    </div>
+
+</div>
+
+{# ==== Pasamos las listas de Python a JS de forma segura ==== #}
+{{ graph_sales_year_month|json_script:"graph-sales-data" }}
+{{ top_products|json_script:"top-products" }}
+{{ near_expiration|json_script:"near-expiration" }}   {# 👈 NUEVO #}
+{{ stock_products|json_script:"stock-products" }}
+{{ low_stock|json_script:"low-stock" }}
+
+<!-- ===================== SCRIPTS HIGHCHARTS ===================== -->
+<script>
+// Recuperamos los datos desde los <script type="application/json">
+const graphSalesData   = JSON.parse(document.getElementById('graph-sales-data').textContent);
+const topProducts      = JSON.parse(document.getElementById('top-products').textContent);
+const nearExpiration   = JSON.parse(document.getElementById('near-expiration').textContent);
+const stockProducts    = JSON.parse(document.getElementById('stock-products').textContent);
+const lowStock         = JSON.parse(document.getElementById('low-stock').textContent);
+
+console.log('graphSalesData:', graphSalesData);
+console.log('topProducts:', topProducts);
+console.log('nearExpiration:', nearExpiration);
+console.log('stockProducts:', stockProducts);
+console.log('lowStock:', lowStock);
+
+
+/* ======================================================
+   🔥 ALERTA AUTOMÁTICA DE STOCK BAJO
+   ====================================================== */
+if (lowStock.length > 0) {
+    let msg = "Los siguientes productos tienen poco stock:<br><br>";
+
+    lowStock.forEach(item => {
+        msg += `<strong>${item.name}</strong>: ${item.stock} unidades<br>`;
+    });
+
+    Swal.fire({
+        icon: "warning",
+        title: "⚠ ¡Stock Bajo!",
+        html: msg,
+        confirmButtonText: "OK",
+        heightAuto: false,
+    });
+}
+
+
+/* ======================================================
+   1. GRÁFICO PRINCIPAL (COLUMNAS) - VENTAS MENSUALES
+   ====================================================== */
+Highcharts.chart('chart_principal', {
+    chart: { type: 'column' },
+    title: { text: 'Ventas mensuales del año actual' },
+    xAxis: {
+        categories: [
+            'Enero','Febrero','Marzo','Abril','Mayo','Junio',
+            'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'
+        ],
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: { text: 'Total vendido (S/)' }
+    },
+    tooltip: {
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat:
+            '<tr>' +
+            '<td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>S/. {point.y:.2f}</b></td>' +
+            '</tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: { column: { pointPadding: 0.2, borderWidth: 0 } },
+    series: [{
+        name: 'Total vendido',
+        showInLegend: false,
+        colorByPoint: true,
+        data: graphSalesData
+    }]
+});
+
+
+/* ======================================================
+   2. PIE CHART - TOP PRODUCTOS MÁS VENDIDOS
+   ====================================================== */
+Highcharts.chart('chart_pie', {
+    chart: { type: 'pie' },
+    title: { text: 'Top 5 productos más vendidos' },
+    tooltip: { pointFormat: '{series.name}: <b>{point.y} unidades</b>' },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: { enabled: true }
+        }
+    },
+    series: [{
+        name: 'Unidades',
+        colorByPoint: true,
+        data: topProducts
+    }]
+});
+
+
+/* ======================================================
+   3. COLUMN CHART - PRODUCTOS PRÓXIMOS A VENCER
+      (30, 60, 90 días)
+   ====================================================== */
+Highcharts.chart('chart_bar', {
+    chart: { type: 'column' },
+    title: { text: 'Productos próximos a vencer ' },
+    xAxis: {
+        categories: nearExpiration.categories,
+        crosshair: true,
+        labels: {
+            rotation: -45,
+            style: { fontSize: '9px' }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: { text: 'Unidades próximas a vencer' }
+    },
+    tooltip: {
+        shared: true,
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat:
+            '<tr>' +
+            '<td style="color:{series.color};padding:0">{series.name}: </td>' +
+            '<td style="padding:0"><b>{point.y} unidades</b></td>' +
+            '</tr>',
+        footerFormat: '</table>',
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            pointPadding: 0.2,
+            borderWidth: 0
+        }
+    },
+    series: [
+        {
+            name: '≤ 30 días',
+            data: nearExpiration.series.le_30
+        },
+        {
+            name: '31 - 60 días',
+            data: nearExpiration.series.d31_60
+        },
+        {
+            name: '61 - 90 días',
+            data: nearExpiration.series.d61_90
+        }
+    ]
+});
+
+
+/* ======================================================
+   4. ÁREA CHART - STOCK ACTUAL POR PRODUCTO
+   ====================================================== */
+Highcharts.chart('chart_area', {
+    chart: { type: 'area' },
+    title: { text: 'Stock actual de productos' },
+    xAxis: {
+        categories: stockProducts.categories,
+        labels: {
+            enabled: true,
+            rotation: -45,
+            style: { fontSize: '9px' }
+        }
+    },
+    yAxis: {
+        min: 0,
+        title: { text: 'Unidades en stock' }
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.y} unidades</b>'
+    },
+    series: [{
+        name: 'Stock',
+        data: stockProducts.data
+    }]
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,190 @@
+{% extends 'list.html' %}
+{% load static %}
+
+{% block head_list %}
+    <script src="{% static 'user/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+<tr>
+    <th style="width: 5%;">Nro</th>
+    <th style="width: 20%;">Nombres</th>
+    <th style="width: 20%;">Apellidos</th>
+    <th style="width: 15%;">Username</th>
+    <th style="width: 15%;">Fecha de registro</th>
+    <th style="width: 10%;">Imagen</th>
+    <th style="width: 15%;">Opciones</th>
+</tr>
+{% endblock %}
+
+{% block rows %}
+{# El cuerpo lo llena DataTables vía AJAX #}
+{% endblock %}
+
+{% block extra_buttons %}
+    <button type="button" class="btn btn-primary btn-flat" id="btnAddUser">
+        <i class="fas fa-plus"></i> Nuevo usuario
+    </button>
+{% endblock %}
+
+{# =============== LIST + MODAL =============== #}
+{% block content %}
+    {{ block.super }}
+
+    <!-- MODAL CREAR / EDITAR USUARIO -->
+    <div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document" style="max-width: 420px;">
+        <div class="modal-content">
+
+          <div class="modal-header border-0 pb-1">
+            <h5 class="modal-title" id="modalUserTitle">
+              <i class="fas fa-user-cog"></i> Usuario
+            </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+
+          <form id="formUser" enctype="multipart/form-data">
+            <div class="modal-body pt-0 pb-2">
+                <input type="hidden" id="user_id" name="id">
+                <input type="hidden" id="user_action" name="action">
+
+                <div class="user-modal-card mx-auto">
+
+                    <!-- Avatar circular -->
+                    <div class="d-flex flex-column align-items-center mb-3">
+                        <div class="avatar-wrapper">
+                            <img id="avatarPreview"
+                                 src="{% static 'img/usuario.png' %}"
+                                 alt="Avatar">
+                        </div>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-primary mt-2"
+                                id="btnChangePhoto">
+                            <i class="fas fa-camera"></i> Cambiar foto
+                        </button>
+                    </div>
+
+                    <!-- Input de archivo oculto -->
+                    <input type="file" name="image" id="id_image" class="d-none">
+
+                    <!-- Campos tipo “pastilla” -->
+                    <div>
+
+                        <div class="form-group pill-input">
+                            <label>Nombres</label>
+                            <input type="text" name="first_name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group pill-input">
+                            <label>Apellidos</label>
+                            <input type="text" name="last_name" class="form-control" required>
+                        </div>
+
+                        <div class="form-group pill-input">
+                            <label>Username</label>
+                            <input type="text" name="username" class="form-control" required>
+                        </div>
+
+                        <div class="form-group pill-input">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control">
+                        </div>
+
+                        <!-- 🔐 Contraseña (solo se usa al CREAR) -->
+                        <div class="form-group pill-input">
+                            <label>Contraseña</label>
+                            <input type="password"
+                                   name="password1"
+                                   class="form-control"
+                                   placeholder="Contraseña">
+                        </div>
+
+                        <div class="form-group pill-input">
+                            <label>Repetir contraseña</label>
+                            <input type="password"
+                                   name="password2"
+                                   class="form-control"
+                                   placeholder="Repite la contraseña">
+                            <small class="form-text text-muted mb-0">
+                                En edición puedes dejar estos campos vacíos; la contraseña no se modificará.
+                            </small>
+                        </div>
+
+                        <div class="form-group d-flex align-items-center justify-content-between mt-2">
+                            <span class="text-muted small">Estado</span>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="id_is_active" name="is_active">
+                                <label class="custom-control-label" for="id_is_active">Activo</label>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="modal-footer border-0 pt-0">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+              <button type="submit" class="btn btn-primary" id="btnSaveUser">Guardar</button>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+
+{% endblock %}
+
+{% block javascript %}
+<style>
+    /* avatar chiquito en la tabla */
+    td img.user-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    /* tarjeta del modal, tamaño similar a tu dibujo */
+    .user-modal-card {
+        max-width: 380px;
+        padding: 10px 20px 5px;
+        border-radius: 16px;
+        margin: 0 auto;
+    }
+
+    /* avatar circular grande */
+    .avatar-wrapper {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: 3px solid #2563eb;
+        overflow: hidden;
+        position: relative;
+        box-shadow: 0 4px 10px rgba(15, 23, 42, 0.25);
+        background: #e5e7eb;
+    }
+
+    .avatar-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    /* inputs estilo “pastilla” */
+    .pill-input .form-control {
+        border-radius: 999px;
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .pill-input label {
+        font-size: 13px;
+        margin-bottom: 2px;
+        color: #4b5563;
+    }
+</style>
+{% endblock %}

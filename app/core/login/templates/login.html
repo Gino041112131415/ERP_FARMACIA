@@ -5,61 +5,284 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Log in</title>
+  <title>Sistema de Inventarios | Iniciar sesión</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Font Awesome -->
   <link rel="stylesheet" href="{% static 'lib/AdminLTE-4.0.0-rc4/plugins/fontawesome-free/css/all.min.css' %}">
   <!-- Theme style -->
   <link rel="stylesheet" href="{% static 'lib/AdminLTE-4.0.0-rc4/css/adminlte.min.css' %}">
-  <!-- Google Font: Source Sans Pro -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
+
   <script src="{% static 'lib/sweetalert2-11.26.3/package/dist/sweetalert2.all.min.js' %}"></script>
+
+  <style>
+      :root {
+          --primary-color: #2563eb;
+          --accent-color: #0ea5e9;
+          --text-main: #111827;
+          --text-muted: #6b7280;
+      }
+
+      /* FONDO GENERAL CON DEGRADADO SUAVE */
+      body {
+          margin: 0;
+          padding: 0;
+          background:
+              radial-gradient(circle at top left, #e0f2fe 0, #eef2ff 35%, transparent 60%),
+              radial-gradient(circle at bottom right, #fee2e2 0, #f9fafb 40%, #e5e7eb 100%);
+          font-family: 'Source Sans Pro', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      /* CONTENEDOR CENTRAL */
+      .auth-wrapper {
+          min-height: 100vh;
+      }
+
+      /* TARJETA PRINCIPAL – MÁS ANCHA Y MÁS ALTA */
+      .auth-card {
+          background: #ffffff;
+          border-radius: 24px;
+          width: 80vw;
+          max-width: 1400px;
+          height: 80vh;
+          max-height: 780px;
+          box-shadow:
+              0 18px 45px rgba(15, 23, 42, 0.18),
+              0 0 0 1px rgba(148, 163, 184, 0.12);
+          overflow: hidden;
+      }
+
+      /* LADO IZQUIERDO – FORMULARIO */
+      .auth-left {
+          flex: 0 0 50%;
+          max-width: 50%;
+      }
+
+      .auth-brand {
+          font-size: 18px;
+          font-weight: 700;
+          letter-spacing: .02em;
+          color: var(--text-main);
+      }
+
+      .auth-brand span {
+          color: var(--primary-color);
+      }
+
+      .auth-title {
+          font-size: 28px;
+          font-weight: 700;
+          color: var(--text-main);
+      }
+
+      .auth-subtitle {
+          font-size: 14px;
+          color: var(--text-muted);
+      }
+
+      .auth-label {
+          font-size: 14px;
+          font-weight: 600;
+          color: #374151;
+      }
+
+      .form-control {
+          border-radius: 14px;
+          border-color: #e5e7eb;
+          padding: 0.65rem 0.9rem;
+          font-size: 14px;
+      }
+
+      .form-control:focus {
+          border-color: var(--primary-color);
+          box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+      }
+
+      .input-group-text {
+          border-radius: 14px;
+          border-color: #e5e7eb;
+          background: #f3f4f6;
+          color: #6b7280;
+      }
+
+      .btn-primary {
+          border-radius: 999px;
+          background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+          border: none;
+          font-weight: 600;
+          font-size: 15px;
+          padding: 0.7rem 1.2rem;
+      }
+
+      .btn-primary:hover {
+          filter: brightness(1.05);
+      }
+
+      .aux-links {
+          font-size: 13px;
+          color: var(--text-muted);
+      }
+
+      .aux-links a {
+          color: var(--primary-color);
+          text-decoration: none;
+      }
+
+      .aux-links a:hover {
+          text-decoration: underline;
+      }
+
+      /* LADO DERECHO – IMAGEN Y TEXTO */
+      .auth-right {
+          flex: 0 0 50%;
+          max-width: 50%;
+          position: relative;
+          background-color: #020617;
+      }
+
+      .auth-right-image {
+          position: absolute;
+          inset: 0;
+          background-image: url("{% static 'img/farmacia_login.jpeg' %}");
+          background-size: cover;
+          background-position: center;
+          filter: brightness(0.9);
+      }
+
+      .auth-right-overlay {
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(135deg, rgba(15,23,42,0.75), rgba(15,23,42,0.1));
+      }
+
+      .auth-right-content {
+          position: relative;
+          z-index: 2;
+          color: #f9fafb;
+      }
+
+      .auth-right-title {
+          font-size: 24px;
+          font-weight: 700;
+      }
+
+      .auth-right-text {
+          font-size: 14px;
+          color: #e5e7eb;
+          max-width: 320px;
+      }
+
+      /* RESPONSIVE – EN MÓVIL solo se ve el formulario */
+      @media (max-width: 991.98px) {
+          .auth-card {
+              width: 100%;
+              max-width: 460px;
+              height: auto;
+              max-height: none;
+          }
+          .auth-left {
+              max-width: 100%;
+              flex: 0 0 100%;
+          }
+          .auth-right {
+              display: none;
+          }
+      }
+  </style>
 </head>
 
-<body class="hold-transition login-page">
-<div class="login-box">
-  <div class="login-logo">
-    <a href="#"><b>Sistema de Gestión de Proyectos </b> SmartBuild</a>
-  </div>
-  <!-- /.login-logo -->
-  <div class="card">
-    <div class="card-body login-card-body">
-      <p class="login-box-msg">Inicia sesión para comenzar</p>
+<body>
 
-      <form action="." method="post">
-        <input type="hidden" name="next" value="{{ next }}">
-        {% csrf_token %}
-        <div class="input-group mb-3">
-          {{ form.username | add_class:"form-control" | attr:" placeholder:ingrese su nombre " }}
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-user"></span>
-            </div>
-          </div>
-        </div>
+<div class="auth-wrapper d-flex align-items-center justify-content-center">
+    <div class="auth-card d-flex flex-column flex-lg-row">
 
-        <div class="input-group mb-3">
-          {{ form.password | add_class:"form-control" | attr:" placeholder:ingrese su contraseña"}}
-          <div class="input-group-append">
-            <div class="input-group-text">
-              <span class="fas fa-lock"></span>
-            </div>
-          </div>
-        </div>
+        <!-- LADO IZQUIERDO: FORMULARIO -->
+        <div class="auth-left d-flex align-items-center p-4 p-md-5">
+            <div class="w-100">
+                <div class="mb-4">
+                    <div class="auth-brand mb-2">
+                        Sistema de Inventarios <span>NovaFarma</span>
+                    </div>
+                    <h1 class="auth-title mb-1">Iniciar sesión</h1>
+                    <p class="auth-subtitle mb-0">
+                        Bienvenido de nuevo. Ingresa tus credenciales para continuar.
+                    </p>
+                </div>
 
-         <div class="row">
-                        <div class="col-lg-12">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fas fa-sign-in-alt"></i> Iniciar sesión
-                            </button>
+                <form action="." method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <!-- Usuario -->
+                    <div class="form-group mb-3">
+                        <label for="id_username" class="auth-label mb-1">Usuario</label>
+                        <div class="input-group">
+                            {{ form.username|add_class:"form-control"|attr:"placeholder:Ingresa tu usuario" }}
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-user"></span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-      </form>
+
+                    <!-- Contraseña -->
+                    <div class="form-group mb-3">
+                        <label for="id_password" class="auth-label mb-1">Contraseña</label>
+                        <div class="input-group">
+                            {{ form.password|add_class:"form-control"|attr:"placeholder:Ingresa tu contraseña" }}
+                            <div class="input-group-append">
+                                <div class="input-group-text">
+                                    <span class="fas fa-lock"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- enlaces auxiliares -->
+                    <div class="d-flex justify-content-between align-items-center mb-3 aux-links">
+                        <span></span>
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                    </div>
+
+                    <!-- Botón -->
+                    <div class="form-group mb-2">
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-sign-in-alt mr-1"></i> Iniciar sesión
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- LADO DERECHO: IMAGEN + TEXTO -->
+        <div class="auth-right d-none d-lg-block">
+            <div class="auth-right-image"></div>
+            <div class="auth-right-overlay"></div>
+            <div class="auth-right-content h-100 d-flex flex-column justify-content-end p-4 p-md-5">
+                <p class="mb-2" style="letter-spacing:.18em;text-transform:uppercase;font-size:11px;color:#9ca3af;">
+                    Tu farmacia, bajo control
+                </p>
+                <h2 class="auth-right-title mb-2">
+                    Gestiona tu inventario con confianza
+                </h2>
+                <p class="auth-right-text mb-3">
+                    Centraliza productos, compras y ventas en un solo sistema pensado para farmacias y boticas.
+                </p>
+            </div>
+        </div>
+
     </div>
-    <!-- /.login-card-body -->
-  </div>
-<script type= "application/javascript">
+</div>
+
+<!-- JS -->
+<script src="{% static 'lib/AdminLTE-4.0.0-rc4/plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'lib/AdminLTE-4.0.0-rc4/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'lib/AdminLTE-4.0.0-rc4/js/adminlte.min.js' %}"></script>
+
+<script type="application/javascript">
   {% if form.errors %}
       var errors = '';
       {% for field in form %}
@@ -71,20 +294,12 @@
         errors += '{{ error }}\n';
       {% endfor %}
       Swal.fire({
-        title: 'Error!',
+        title: 'Error',
         text: errors,
         icon: 'error'
       });
-      {% endif %}
+  {% endif %}
 </script>
-</div>
-<!-- /.login-box -->
 
-<!-- jQuery -->
-<script src="{% static 'lib/AdminLTE-4.0.0-rc4/plugins/jquery/jquery.min.js' %}"></script>
-<!-- Bootstrap 4 -->
-<script src="{% static 'lib/AdminLTE-4.0.0-rc4/plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<!-- AdminLTE App -->
-<script src="{% static 'lib/AdminLTE-4.0.0-rc4/js/adminlte.min.js' %}"></script>
 </body>
 </html>

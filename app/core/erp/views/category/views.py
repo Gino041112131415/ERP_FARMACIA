@@ -4,6 +4,8 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView , CreateView , UpdateView , DeleteView, FormView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
+from core.erp.mixins import  validarPermisos
+from django.contrib.auth.mixins import LoginRequiredMixin 
 from core.forms import CategoryForm
 from core.erp.models import Category
 from django.contrib.auth.decorators import login_required
@@ -18,7 +20,8 @@ def category_list(request):
 
 
 # --- Vista basada en clase ---
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin, validarPermisos, ListView):
+    permission_required = ('erp.view_category' , 'erp.add_category' , 'erp.change_category')
     model = Category
     template_name = 'category/list.html'
 
@@ -27,7 +30,7 @@ class CategoryListView(ListView):
         return Category.objects.filter(name__startswith='')
     
     @method_decorator(csrf_exempt)
-    @method_decorator(login_required)
+    #@method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
         return super().dispatch(request, *args, **kwargs)
     
@@ -56,7 +59,9 @@ class CategoryListView(ListView):
         return context
 
 
-class CategoryCreateView(CreateView):
+class CategoryCreateView(validarPermisos, CreateView):
+    permission_required = 'erp.add_category'
+    url_redirect = reverse_lazy('erp:category_list')
     model = Category
     form_class = CategoryForm
     template_name = 'category/create.html'

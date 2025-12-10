@@ -1,0 +1,102 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card p-4 shadow-sm">
+
+    <h3 class="mb-4">📈 Predicción de ventas — Próximos 30 días</h3>
+
+    <!-- Selector de producto -->
+    <form method="get">
+        <label>Selecciona producto:</label>
+        <select name="product_id" onchange="this.form.submit()" class="form-control w-25">
+            {% for p in products %}
+                <option value="{{ p.product_id }}"
+                    {% if p.product_id == product_id %}selected{% endif %}>
+                    {{ p.product_name }} ({{ p.product_id }})
+                </option>
+            {% endfor %}
+        </select>
+    </form>
+
+    <br>
+
+    <!-- Gráfico 1 -->
+    <div id="chart_30" style="height: 430px;"></div>
+
+    <hr class="my-4">
+
+    <!-- Gráfico 2: IDI -->
+    <h3 class="mt-4">📦 Duración del Inventario (IDI) — Real y Proyección ML</h3>
+    <div id="chart_idi" style="height: 430px;"></div>
+
+</div>
+
+<!-- Highcharts -->
+<script src="https://code.highcharts.com/highcharts.js"></script>
+
+<!-- =============================
+     GRÁFICO 1 — Predicción de ventas
+============================== -->
+<script>
+Highcharts.chart('chart_30', {
+    chart: { type: 'line' },
+    title: { text: 'Predicción de ventas (30 días)' },
+
+    xAxis: {
+        categories: {{ dates|safe }},
+        labels: { rotation: -45 }
+    },
+
+    yAxis: {
+        title: { text: 'Unidades vendidas' }
+    },
+
+    series: [{
+        name: 'Predicción ML',
+        data: {{ values|safe }},
+        color: '#007bff',
+        marker: { radius: 4 }
+    }]
+});
+</script>
+
+<!-- =============================
+     GRÁFICO 2 — IDI real + Proyección
+============================== -->
+<script>
+Highcharts.chart('chart_idi', {
+    chart: { type: 'line' },
+    title: { text: 'Duración del Inventario (IDI)' },
+
+    xAxis: {
+        categories: {{ idi_hist_dates|safe }}.concat({{ idi_future_dates|safe }}),
+        labels: { rotation: -45 }
+    },
+
+    yAxis: {
+        title: { text: 'Días de duración' }
+    },
+
+    series: [
+        {
+            name: 'IDI Histórico',
+            data: {{ idi_hist_values|safe }},
+            color: '#ff4d4d',
+            marker: { radius: 3 }
+        },
+        {
+            name: 'IDI Proyectado (ML)',
+            data: {{ idi_future_values|safe }},
+            color: '#ff99cc',
+            dashStyle: 'ShortDash',
+            marker: { radius: 3 }
+        }
+    ]
+});
+</script>
+
+{% endblock %}
+
+

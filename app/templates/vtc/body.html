@@ -19,7 +19,7 @@
             <!-- Título -->
             <div class="col-sm-6">
               <h1 class="m-0 text-dark">
-                Sistema de Inventarios <small>X</small>
+                Sistema de Inventarios <small></small>
               </h1>
             </div>
 
@@ -46,10 +46,7 @@
       <!-- /.content -->
     </div>
     <!-- /.content-wrapper -->
-
-    <!-- Sidebar de control (opcional) -->
     <aside class="control-sidebar control-sidebar-dark">
-      <!-- Contenido adicional si lo necesitas -->
     </aside>
 
     <!-- Footer -->
@@ -59,5 +56,21 @@
 
   {% block javascript %}
   {% endblock %}
+  <script>
+    {% if messages %}
+        var html = '<p>';
+        {% for message in messages %}
+            html += '{{ message }}<br>';
+        {% endfor %}
+        html += '</p>';
+
+        Swal.fire({
+            title: 'Error!',
+            html: html,
+            icon: 'error'
+        });
+    {% endif %}
+</script>
+
 </body>
 {% endblock %}

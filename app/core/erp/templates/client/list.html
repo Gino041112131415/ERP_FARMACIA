@@ -1,0 +1,62 @@
+{% extends 'list.html' %}
+{% load static %}
+
+{% block head_list %}
+<script src="{% static 'client/js/list.js' %}"></script>
+{% endblock %}
+
+{% block columns %}
+<tr>
+    <th>Nro</th>
+    <th>Nombres</th>
+    <th>Apellidos</th>
+    <th>DNI</th>
+    <th>F. Nacimiento</th>
+    <th>Dirección</th>
+    <th>Sexo</th>
+    <th>Opciones</th>
+</tr>
+{% endblock %}
+
+{% block rows %}{% endblock %}
+
+{% block extra_buttons %}
+<button type="button" id="btnAdd" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Nuevo registro
+</button>
+{% endblock %}
+
+{% block javascript %}
+<!-- Modal -->
+<div class="modal fade" id="myModalClient" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <form id="frmClient">
+        {% csrf_token %}
+        <input type="hidden" name="action" id="action">
+        <input type="hidden" name="id" id="id">
+
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Nuevo Cliente</h5>
+          <button type="button" class="close" data-dismiss="modal">
+            <span>&times;</span>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          {{ form.as_p }}
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary">Guardar</button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+

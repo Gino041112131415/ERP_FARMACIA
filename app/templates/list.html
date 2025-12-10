@@ -12,47 +12,130 @@
   <script src="{% static 'lib/datatables-1.10.25/plugins/responsive-2.2.9/js/dataTables.responsive.min.js' %}"></script>
   <script src="{% static 'lib/datatables-1.10.25/plugins/responsive-2.2.9/js/responsive.bootstrap4.min.js' %}"></script>
 
-  {% block head_list  %}
-  
-  {% endblock %}
+  <style>
+      /* ====== CARD GENERAL DE LISTADOS ====== */
+      .list-card {
+          border: none;
+          border-radius: 16px;
+          box-shadow:
+              0 18px 45px rgba(15, 23, 42, 0.12),
+              0 0 0 1px rgba(148, 163, 184, 0.15);
+      }
 
+      .list-card .card-header {
+          border: none;
+          background: linear-gradient(135deg, #2563eb, #0ea5e9);
+          color: #fff;
+      }
+
+      .list-card .card-header .card-title {
+          margin-bottom: 0;
+          font-weight: 600;
+          font-size: 15px;
+          display: flex;
+          align-items: center;
+          gap: .45rem;
+      }
+
+      .list-card .card-header small {
+          font-weight: 400;
+          opacity: .9;
+      }
+
+      .list-card .card-body {
+          padding: 1rem 1.5rem 1.25rem 1.5rem;
+      }
+
+      .list-card .card-footer {
+          border-top: none;
+          background-color: #ffffff;
+          padding: .85rem 1.5rem 1.25rem 1.5rem;
+      }
+
+      /* ====== TABLA ====== */
+      table#data {
+          width: 100%;
+      }
+
+      table#data thead th {
+          background-color: #f3f4f6;
+          color: #374151;
+          border-bottom: 1px solid #e5e7eb !important;
+          font-weight: 600;
+          font-size: .82rem;
+          text-transform: uppercase;
+      }
+
+      table#data tbody td {
+          vertical-align: middle;
+          font-size: .85rem;
+      }
+
+      table#data tbody tr:hover {
+          background-color: #eff6ff;
+      }
+
+      /* ====== BOTÓN PRINCIPAL ====== */
+      .btn-main {
+          border-radius: 999px;
+          background: linear-gradient(135deg, #2563eb, #0ea5e9);
+          border: none;
+          font-weight: 600;
+          font-size: .9rem;
+          padding: .5rem 1.1rem;
+          box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+      }
+
+      .btn-main:hover {
+          filter: brightness(1.05);
+      }
+
+      /* Pequeño ajuste al wrapper para que no pegue tanto al borde */
+      .content-wrapper {
+          background-color: #f9fafb;
+      }
+  </style>
+
+  {% block head_list %}{% endblock %}
 {% endblock %}
 
 {% block content %}
-<div class="card card-default">
+
+<div class="card list-card">
+
   <div class="card-header">
     <h3 class="card-title">
-      <i class="fas fa-search"></i>
+      <i class="fas fa-list"></i>
       {{ title }}
+      <small>/ {{ date_now }}</small>
     </h3>
   </div>
 
   <div class="card-body">
-    <!-- importante: el id="data" -->
-    <table  class="table" id="data">
+    <table class="table table-striped table-hover table-sm mb-0" id="data">
       <thead>
-        {% block columns %}
-        {% endblock %}
+        {% block columns %}{% endblock %}
       </thead>
-
       <tbody>
-        {% block rows %}
-        {% endblock %}
+        {% block rows %}{% endblock %}
       </tbody>
     </table>
   </div>
 
-  <div class="card-footer">
-    <a href="{{ create_url }}" class="btn btn-primary btn-flat btnTest">
-      <i class="fas fa-plus"></i> Nuevo registro
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    {% block extra_buttons %}
+    <a href="{{ create_url }}" class="btn btn-main">
+        <i class="fas fa-plus mr-1"></i> Nuevo registro
     </a>
+    {% endblock %}
   </div>
+
 </div>
+
 {% endblock %}
 
 {% block javascript %}
 <script type="application/javascript">
-  // Inicialización de DataTable
   $(function () {
     $('#data').DataTable({
       responsive: true,
@@ -63,10 +146,10 @@
     });
   });
 
-  // Evento de prueba para el botón "Nuevo registro"
+  // Ejemplo de botón de prueba (puedes eliminarlo si no lo usas)
   $(".btnTest").on('click', function () {
     $.ajax({
-      url: "{% url 'erp:category_list' %}",  // Corregido el template tag y comillas
+      url: "{% url 'erp:category_list' %}",
       type: "POST",
       data: { id: 787 },
       dataType: 'json'
@@ -77,10 +160,7 @@
     })
     .fail(function (jqxHR, textStatus, errorThrown) {
       alert('textStatus: ' + textStatus + ', errorThrown: ' + errorThrown);
-      console.error(error);
-    })
-    .always(function () {
-      
+      console.error(errorThrown);
     });
   });
 </script>

@@ -32,6 +32,8 @@ INSTALLED_APPS = [
     'core.erp',
     'widget_tweaks',
     'core.login',
+    'core.user',
+    'core.reports',
 ]
 
 # -----------------------
@@ -101,7 +103,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # -----------------------
 # Clave primaria por defecto
 # -----------------------
@@ -114,3 +116,4 @@ LOGIN_URL = '/login/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
+AUTH_USER_MODEL = 'user.User'

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+
+    <style>
+        body {
+            font-size: 12px;
+            font-family: DejaVu Sans, sans-serif;
+        }
+
+        .text-right { text-align: right; }
+        .text-left  { text-align: left; }
+        .text-center{ text-align: center; }
+
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+
+        .img-invoice {
+            width: 80px;
+        }
+
+        /* ENCABEZADO DE LA EMPRESA */
+        .header-company {
+            text-align: center;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .header-company-name {
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .header-company-ruc {
+            font-size: 11px;
+        }
+
+        .header-company-address {
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* TABLA PRINCIPAL DE DETALLE */
+        table.items {
+            width: 95%;
+            margin: 15px auto 0 auto;    /* centrada */
+            border-collapse: collapse;
+        }
+
+        table.items th,
+        table.items td {
+            padding: 4px 4px;
+            font-size: 11px;
+            vertical-align: middle;
+        }
+
+        table.items thead th {
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+
+        table.items tbody td {
+            border-bottom: 1px solid #000;
+        }
+
+        /* Clases por columna (se usan en th y td) */
+        .col-cant   { width: 10%; text-align: center; }
+        .col-price  { width: 18%; text-align: right; }
+        .col-cate   { width: 22%; text-align: left; }
+        .col-prod   { width: 40%; text-align: left; }
+        .col-total  { width: 10%; text-align: right; }
+
+        /* Números con monoespaciada para que se vean más ordenados */
+        .num {
+            font-family: DejaVu Sans Mono, monospace;
+        }
+
+        /* Tabla del resumen */
+        table.resume {
+            width: 40%;
+            margin-top: 15px;
+            margin-left: auto;
+            margin-right: 20px;
+            font-size: 11px;
+        }
+
+        table.resume td {
+            padding: 3px 2px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ENCABEZADO EMPRESA -->
+    <div class="header-company">
+        {% if icon %}
+            <img src="{{ icon }}" class="img-invoice">
+        {% endif %}
+
+        <div class="header-company-name">
+            {{ comp.name|upper }}
+        </div>
+        <div class="header-company-ruc">
+            {{ comp.ruc }}
+        </div>
+        <div class="header-company-address">
+            {{ comp.address|upper }}
+        </div>
+    </div>
+
+    <!-- DATOS FACTURA / CLIENTE -->
+    <div class="mt-1">
+        <span class="bold">FACTURA:</span> {{ sale.id }}<br>
+        <span class="bold">FECHA DE VENTA:</span> {{ sale.date_joined }}<br>
+        <span class="bold">CLIENTE:</span> {{ sale.cli.names|upper }} {{ sale.cli.surnames|upper }}<br>
+        <span class="bold">DNI:</span> {{ sale.cli.dni }}<br>
+    </div>
+
+    <!-- DETALLE -->
+    <table class="items">
+        <thead>
+            <tr>
+                <th class="col-cant">CANT</th>
+                <th class="col-price">P.UNITARIO</th>
+                <th class="col-cate">CATEGORIA</th>
+                <th class="col-prod">PRODUCTO</th>
+                <th class="col-total">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for det in sale.detsale_set.all %}
+            <tr>
+                <td class="col-cant">{{ det.cant }}</td>
+                <td class="col-price num">S/ {{ det.price|floatformat:2 }}</td>
+                <td class="col-cate">{{ det.prod.cate.name }}</td>
+                <td class="col-prod">{{ det.prod.name }}</td>
+                <td class="col-total num">S/ {{ det.subtotal|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- RESUMEN -->
+    <table class="resume">
+        <tr>
+            <td class="bold text-left">SUBTOTAL</td>
+            <td class="text-right num">S/ {{ sale.subtotal|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td class="bold text-left">IGV {{ sale.iva }}</td>
+            <td class="text-right num">S/ {{ igv_calc|floatformat:2 }}</td>
+        </tr>
+        <tr>
+            <td class="bold text-left">TOTAL A PAGAR</td>
+            <td class="bold text-right num">S/ {{ sale.total|floatformat:2 }}</td>
+        </tr>
+    </table>
+
+</body>
+</html>
+

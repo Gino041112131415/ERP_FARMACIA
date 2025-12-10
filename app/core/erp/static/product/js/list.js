@@ -5,9 +5,9 @@ $(function () {
         destroy: true,
         deferRender: true,
         ajax: {
-            url: window.location.pathname, // usa la URL actual (ej. /erp/product/list/)
+            url: window.location.pathname,
             type: 'POST',
-            data: { 'action': 'searchdata' }, // 👈 ahora sí enviamos "action"
+            data: { 'action': 'searchdata' },
             dataSrc: ""
         },
         columns: [
@@ -19,17 +19,38 @@ $(function () {
             },
             { data: 'name' },
             { data: 'cate.name' },
+
+            // Imagen
             {
                 data: 'image',
+                orderable: false,
+                class: 'text-center',
                 render: function (data) {
                     if (!data) {
-                        return '<span class="text-muted">Sin imagen</span>';
+                        return `<span class="text-muted">Sin imagen</span>`;
                     }
-                    return `<img src="${data}" style="width:50px;height:50px;" class="img-fluid rounded">`;
+                    return `
+                        <img src="${data}"
+                        class="img-fluid d-block mx-auto"
+                        style="width: 50px; height: 50px; object-fit: cover;">
+                    `;
                 }
             },
-            { data: 'stock' },
+
+            // STOCK con badge
+            {
+                data: 'stock',
+                class: 'text-center',
+                render: function (data) {
+                    if (data <= 5) {
+                        return `<span class="badge badge-danger">${data}</span>`;
+                    }
+                    return `<span class="badge badge-success">${data}</span>`;
+                }
+            },
+
             { data: 'pvp' },
+
             {
                 data: 'id',
                 class: 'text-center',
@@ -42,8 +63,21 @@ $(function () {
                 }
             }
         ],
+
+        /* 🚀 AQUI SE COLOREA TODA LA FILA */
+        rowCallback: function (row, data) {
+
+            if (data.stock <= 5) {
+                $(row).addClass('row-low-stock');  // 🔥 rojo suave
+            } else {
+                $(row).addClass('row-good-stock'); // 🍃 verde suave
+            }
+        },
+
         language: {
             url: '//cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json'
         }
     });
 });
+
+
